@@ -5,11 +5,11 @@ using UnityEngine.Networking;
 
 
 /*
-    �`����y�{: 
-    1.playerA(client)���UA��
-    2.playerA �q�� playerB(server)����CmdPlusHp()
-    3.playerB �q����client��playerA���� RpcHpUI(float hp)
-    4.�C�@��client����playerA��hp���[�F10
+    流程: 
+    1.playerA(client)點擊A鍵
+    2.playerA 通知 playerB(server)執行CmdPlusHp()
+    3.playerB 通知所有client中的playerA執行RpcHpUI(float hp)
+    4.所有client中的playerA的hp都+10
 */
 
 public class Player : NetworkBehaviour {
@@ -43,7 +43,7 @@ public class Player : NetworkBehaviour {
         }
     }
 
-    //[Command]:�u�|�bserver�ݰ��檺function
+    //[Command]:只有server端執行的function
     [Command]
     void CmdPlusHp(int hp) {
 
@@ -51,7 +51,7 @@ public class Player : NetworkBehaviour {
         Debug.Log("only server");
     }
 
-    //[ClientRpc]:server�q����client��playerA�����function�A�G�u�bserver�ݰ���ɤ~���ġA���i�qclient�ݪ����I�s
+    //[ClientRpc]:server端讓所有client端的playerA執行此function。因為所有client都只有連向server，故必須透過server不能直接命令其他client端執行
     [ClientRpc]
     public void RpcHpUI(float hp) {
         curHp += hp;
@@ -59,7 +59,7 @@ public class Player : NetworkBehaviour {
         Debug.Log(this.name + " plus " + hp + "pt");
     }
 
-    //��l�P�B�ثe�ж����Ҧ�client���A
+    //讓剛加入連線(房間)的client同步房間內其他client的狀況
     void ReFreashAllClientState() {
         Player[] players = Object.FindObjectsOfType<Player>();
         for (int i = 0; i < players.Length; i++) {
