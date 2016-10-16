@@ -6,7 +6,8 @@ public class TimerSpawner : NetworkBehaviour {
 
     public override void OnStartServer() {
         Debug.Log(this.name + " im server");
-        GameObject aa = Instantiate(timerPrefab) as GameObject;
-        NetworkServer.Spawn(aa);
+        GameObject timer = Instantiate(timerPrefab) as GameObject;
+        timer.name = "Timer";
+        NetworkServer.Spawn(timer);
     }
 }
